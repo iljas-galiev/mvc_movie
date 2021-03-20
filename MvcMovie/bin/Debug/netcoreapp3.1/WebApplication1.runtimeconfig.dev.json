@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "/Users/tiffka/.dotnet/store/|arch|/|tfm|",
+      "/Users/tiffka/.nuget/packages"
+    ]
+  }
+}
