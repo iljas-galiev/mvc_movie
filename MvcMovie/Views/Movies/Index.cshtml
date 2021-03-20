@@ -1,72 +1,70 @@
-@model MvcMovie.Models.MovieGenreViewModel
+@model MvcMovie.Models.MovieSearchViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Movies";
 }
 
-<h1>Index</h1>
+<h1 class="text-center">Movies</h1>
+<div class="container">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<form asp-controller="Movies" asp-action="Index" method="get">
-    <p>
+    <div class="row">
+        <div class="col-sm-4">
 
-        <select asp-for="MovieGenre" asp-items="Model.Genres">
-            <option value="">All</option>
-        </select>
-
-        Title: <input type="text" asp-for="SearchString"/>
-        <input type="submit" value="Filter"/>
-    </p>
-</form>
-
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Movies[0].Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Movies[0].ReleaseDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Movies[0].Genre)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Movies[0].Price)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Movies[0].Rating)
-        </th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model.Movies)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReleaseDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Genre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-    }
-    </tbody>
-</table>
+            <form class="form-search" asp-controller="Movies" asp-action="Index" method="get">
+                <div class="row">
+                    <div class="col-sm-6 form-group">
+                        <label for="MovieQuality">Качество</label>
+                        <select class="form-control" asp-for="MovieQuality" asp-items="Model.Qualities">
+                            <option value="">All</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 form-group">
+                        <label for="MovieYear">Год</label>
+                        <select class="form-control" asp-for="MovieYear" asp-items="Model.Years">
+                            <option value="">All</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container movies">
+    <div class="row">
+        @foreach (var item in Model.Movies)
+        {
+            <div class="col-sm-4 col-12 movie-container">
+                <div class="movie">
+                    <div class="movie-image-container">
+                        <a asp-action="Details" asp-route-id="@item.Id">
+                            <div class="movie-quality">
+                                @Html.DisplayFor(modelItem => item.Quality)
+                            </div>
+                            <div class="movie-image">
+                                <img src="/img/default.jpg" alt="">
+                            </div>
+                            <div class="movie-title">
+                                @Html.DisplayFor(modelItem => item.Title)
+                                (@Html.DisplayFor(modelItem => item.Year))
+                            </div>
+                        </a>
+                    </div>
+                    <div class="row movie-counters">
+                        <div class="col-6">
+                            <div class="movie-views">
+                                <i class="fa fa-eye"></i>
+                                1234
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="movie-downloads">
+                                <i class="fa fa-download"></i>
+                                567
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

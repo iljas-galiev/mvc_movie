@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MvcMovie.Data;
+using MvcMovie.Internal;
 using MvcMovie.Models;
 
 namespace MvcMovie.Controllers
@@ -14,19 +15,32 @@ namespace MvcMovie.Controllers
     public class MoviesController : Controller
     {
         private readonly MvcMovieContext _context;
+        private ILogger _logger;
 
-        public MoviesController(MvcMovieContext context)
+        public MoviesController(MvcMovieContext context, ILogger<MoviesController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
+
         // GET: Movies
-        public async Task<IActionResult> Index(string movieGenre, string searchString)
+        public async Task<IActionResult> Index(string movieGenre, string searchString, string movieQuality, string movieYear)
         {
+
+            _logger.IndexPageRequested();
+
+
             // Use LINQ to get list of genres.
             IQueryable<string> genreQuery = from m in _context.Movie
                 orderby m.Genre
                 select m.Genre;
+            IQueryable<string> yearQuery = from m in _context.Movie
+                orderby m.Year
+                select m.Year;
+            IQueryable<string> qualityQuery = from m in _context.Movie
+                orderby m.Quality
+                select m.Quality;
 
             var movies = from m in _context.Movie
                 select m;
@@ -41,9 +55,21 @@ namespace MvcMovie.Controllers
                 movies = movies.Where(x => x.Genre == movieGenre);
             }
 
-            var movieGenreVM = new MovieGenreViewModel
+            if (!string.IsNullOrEmpty(movieQuality))
+            {
+                movies = movies.Where(x => x.Quality == movieQuality);
+            }
+
+            if (!string.IsNullOrEmpty(movieYear))
+            {
+                movies = movies.Where(x => x.Year == movieYear);
+            }
+
+            var movieGenreVM = new MovieSearchViewModel()
             {
                 Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
+                Qualities = new SelectList(await qualityQuery.Distinct().ToListAsync()),
+                Years = new SelectList(await yearQuery.Distinct().ToListAsync()),
                 Movies = await movies.ToListAsync()
             };
 
@@ -79,7 +105,7 @@ namespace MvcMovie.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate,Genre,Price,Rating")] Movie movie)
+        public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate,Genre,Price,Rating,Year,Quality")] Movie movie)
         {
             if (ModelState.IsValid)
             {

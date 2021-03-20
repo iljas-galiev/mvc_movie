@@ -20,6 +20,13 @@ namespace MvcMovie.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Price { get; set; }
 
+        [Required]
+        [StringLength(5)]
+        public string Quality { get; set; }
+
+        [Range(1800, 3050)]
+        public string Year { get; set; }
+
         [RegularExpression(@"^[A-Z]+[a-zA-Z]*$")]
         [Required]
         [StringLength(30)]
